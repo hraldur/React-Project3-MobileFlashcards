@@ -1,14 +1,34 @@
 import React, { Component } from "react";
-import { View, Button, Text, TextInput, StyleSheet } from "react-native";
+import {
+  View,
+  Button,
+  Text,
+  TextInput,
+  StyleSheet,
+  Platform,
+  TouchableOpacity
+} from "react-native";
+import { HeaderBackButton, NavigationActions } from "react-navigation";
 import { addCardToDeck } from "../utils/api";
 import { connect } from "react-redux";
 import { addCard } from "../actions";
 import { white, gray, blue } from "../utils/colors";
+import AndroidBtn from "./AndroidBtn";
+import IosBtn from "./IosBtn";
 
 class NewCard extends Component {
   state = {
     question: "",
     answer: ""
+  };
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Add Card",
+      headerLeft: (
+        <HeaderBackButton onPress={() => navigation.navigate("Home")} />
+      )
+    };
   };
 
   handleChange(target, input) {
@@ -42,7 +62,6 @@ class NewCard extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>What is the title of your new Deck?</Text>
         <View style={{ marginTop: 100 }}>
           <View style={styles.inputView}>
             <TextInput
@@ -60,13 +79,22 @@ class NewCard extends Component {
               value={this.state.answer}
             />
           </View>
-          <View style={styles.button}>
-            <Button
-              color={white}
-              title="Create Card"
-              onPress={() => this.submit()}
-            />
-          </View>
+          {Platform.OS === "ios" ? (
+            <View>
+              <IosBtn style={{ marginTop: 230 }} onPress={() => this.submit()}>
+                Create Card
+              </IosBtn>
+            </View>
+          ) : (
+            <View>
+              <AndroidBtn
+                style={{ marginTop: 200 }}
+                onPress={() => this.submit()}
+              >
+                Create Card
+              </AndroidBtn>
+            </View>
+          )}
         </View>
       </View>
     );
@@ -94,16 +122,11 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: gray,
     borderWidth: 1,
-    borderRadius: 10
+    borderRadius: 10,
+    marginTop: 10
   },
   inputView: {
     marginTop: 10
-  },
-  button: {
-    height: 50,
-    backgroundColor: blue,
-    borderRadius: 15,
-    marginTop: 25
   }
 });
 

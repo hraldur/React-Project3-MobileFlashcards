@@ -15,7 +15,6 @@ export function getDeck (id) {
 }
 
 export function saveDeckTitle (title) {
-  console.log(title)
   return AsyncStorage.mergeItem(DECK_STORAGE_KEY, JSON.stringify({
   [title]: {
      title: title,
@@ -25,7 +24,6 @@ export function saveDeckTitle (title) {
 }
 
 export function addCardToDeck (title, card) {
-  console.log("API!!", title, card)
   return AsyncStorage.getItem(DECK_STORAGE_KEY)
     .then((results) => {
       const data = JSON.parse(results)

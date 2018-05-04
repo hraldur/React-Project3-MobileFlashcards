@@ -10,6 +10,8 @@ import {
 import { connect } from "react-redux";
 import { HeaderBackButton, NavigationActions } from "react-navigation";
 import { blue, white } from "../utils/colors";
+import AndroidBtn from "./AndroidBtn";
+import IosBtn from "./IosBtn";
 
 class DeckDetail extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -22,11 +24,6 @@ class DeckDetail extends Component {
     };
   };
 
-  getColor = () => {
-    if (Platform.OS === "ios") {
-      return white;
-    } else return blue;
-  };
   render() {
     const { deck, navigation } = this.props;
     return (
@@ -40,60 +37,59 @@ class DeckDetail extends Component {
 
             <View style={styles.groupButtons}>
               {Platform.OS === "ios" ? (
-                <View >
-                  <TouchableOpacity
-                    style={[styles.iosBtn, { backgroundColor:white, borderColor: blue, borderWidth: 1,}]}
+                <View>
+                  <IosBtn
+                    style={{
+                      backgroundColor: white,
+                      borderColor: blue,
+                      borderWidth: 1
+                    }}
+                    textStyle={{ color: blue }}
                     onPress={() =>
                       navigation.navigate("NewCard", { deckId: deck.title })
                     }
                   >
-                    <Text style={[styles.btnText, {marginTop: 10, color: blue}]}>Add Card</Text>
-                  </TouchableOpacity>
+                    Add Card
+                  </IosBtn>
                 </View>
               ) : (
                 <View>
-                  <TouchableOpacity
-                    style={styles.androidBtn}
+                  <AndroidBtn
                     onPress={() =>
                       navigation.navigate("NewCard", { deckId: deck.title })
-                    }>
-                    <Text style={styles.btnText}>Add Card</Text>
-                    </TouchableOpacity>
+                    }
+                  >
+                    Add Card
+                  </AndroidBtn>
                 </View>
               )}
             </View>
 
-            {Object.values(deck.questions).length != 0 && Platform.OS === "ios" && (
-              <View>
-                <TouchableOpacity
-                  style={styles.iosBtn}
-                  color={this.getColor()}
-                  raised={true}
-                  onPress={() =>
-                    navigation.navigate("Quiz", { questions: deck.questions })
-                  }
-                >
-                  <Text style={[styles.btnText, {marginTop: 10}]}>Start Quiz</Text>
-              </TouchableOpacity>
-              </View>
-            )}
+            {Object.values(deck.questions).length != 0 &&
+              Platform.OS === "ios" && (
+                <View>
+                  <IosBtn
+                    onPress={() =>
+                      navigation.navigate("Quiz", { questions: deck.questions })
+                    }
+                  >
+                    Start Quiz
+                  </IosBtn>
+                </View>
+              )}
 
-
-            {Object.values(deck.questions).length != 0 && Platform.OS === "android" && (
-              <View >
-                <TouchableOpacity
-                  style={styles.androidBtn}
-                  color={this.getColor()}
-                  raised={true}
-                  onPress={() =>
-                    navigation.navigate("Quiz", { questions: deck.questions })
-                  }
-                >
-                  <Text style={styles.btnText}>Start Quiz</Text>
-                </TouchableOpacity>
-                
-              </View>
-            )}
+            {Object.values(deck.questions).length != 0 &&
+              Platform.OS === "android" && (
+                <View>
+                  <AndroidBtn
+                    onPress={() =>
+                      navigation.navigate("Quiz", { questions: deck.questions })
+                    }
+                  >
+                    Start Quiz
+                  </AndroidBtn>
+                </View>
+              )}
           </View>
         )}
       </View>
@@ -108,35 +104,13 @@ const styles = StyleSheet.create({
     backgroundColor: white
   },
 
-  iosBtn: {
-    height: 50,
-    backgroundColor: blue,
-    borderRadius: 15,
-    marginTop: 15,
-    paddingBottom: 10
-  },
-
-  androidBtn: {
-    height: 50,
-    borderRadius: 2,
-    marginTop: 15,
-    padding: 10,
-    backgroundColor: blue,
-
-  },
-
   title: {
     fontSize: 40
   },
 
   groupButtons: {
     marginTop: 10
-  },
-
-  btnText: {
-    textAlign: 'center',
-    color: white,
-    fontSize: 18}
+  }
 });
 
 function mapStateToProps(state, { navigation }) {

@@ -3,12 +3,14 @@ import {
   Text,
   View,
   FlatList,
-  TouchableOpacity,
   StyleSheet,
-  Button,
-  Alert
+  Alert,
+  Platform
 } from "react-native";
+import { HeaderBackButton, NavigationActions } from "react-navigation";
 import TextButton from "./TextButton";
+import AndroidBtn from "./AndroidBtn";
+import IosBtn from "./IosBtn";
 import { white, gray, blue, yellow } from "../utils/colors";
 
 class Quiz extends Component {
@@ -16,6 +18,15 @@ class Quiz extends Component {
     index: 0,
     correctAnswers: 0,
     revealAnswer: false
+  };
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Quiz',
+      headerLeft: (
+        <HeaderBackButton onPress={() => navigation.navigate("Home")} />
+      )
+    };
   };
 
   processQuiz = () => {
@@ -67,25 +78,46 @@ class Quiz extends Component {
   quizActions = questions => {
     return (
       <View>
-        <View style={styles.button}>
-          <Button
-            color={white}
-            title="Correct"
-            onPress={() => {
-              this.setState(
-                { correctAnswers: this.state.correctAnswers + 1 },
-                this.processQuiz
-              );
-            }}
-          />
-        </View>
-        <View style={styles.incorrectButton}>
-          <Button
-            color={white}
-            title="Incorrect"
-            onPress={() => this.processQuiz()}
-          />
-        </View>
+        {Platform.OS === "ios" ? (
+          <View>
+            <IosBtn
+              onPress={() =>
+                this.setState(
+                  { correctAnswers: this.state.correctAnswers + 1 },
+                  this.processQuiz
+                )
+              }
+            >
+              Correct
+            </IosBtn>
+
+            <IosBtn
+              style={{ backgroundColor: white, borderColor: blue, borderWidth: 1}}
+              onPress={() => this.processQuiz()}
+              textStyle={{color: blue}}
+            >
+              Incorrect
+            </IosBtn>
+
+          </View>
+        ) : (
+          <View>
+            <AndroidBtn
+              onPress={() =>
+                this.setState(
+                  { correctAnswers: this.state.correctAnswers + 1 },
+                  this.processQuiz
+                )
+              }
+            >
+              Correct
+            </AndroidBtn>
+
+            <AndroidBtn onPress={() => this.processQuiz()}>
+              Incorrect
+            </AndroidBtn>
+          </View>
+        )}
       </View>
     );
   };
@@ -141,22 +173,10 @@ const styles = StyleSheet.create({
     backgroundColor: white,
     padding: 20
   },
-  button: {
-    height: 50,
-    backgroundColor: blue,
-    borderRadius: 15,
-    marginTop: 25
-  },
-  incorrectButton: {
-    height: 50,
-    backgroundColor: yellow,
-    borderRadius: 15,
-    marginTop: 15
-  },
   index: {
-    fontSize:14,
-    fontWeight: 'bold'
-  }
+    fontSize: 14,
+    fontWeight: "bold"
+  },
 });
 
 export default Quiz;

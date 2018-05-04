@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
   },
   deck: {
     margin: 15,
-    // padding: 20,
     height: 44
   },
   deckTitle: {
