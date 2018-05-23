@@ -4,7 +4,8 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  Platform
+  Platform,
+  KeyboardAvoidingView
 } from "react-native";
 import { saveDeckTitle, fetchDeckResults } from "../utils/api";
 import { connect } from "react-redux";
@@ -41,11 +42,15 @@ class NewDeck extends Component {
         title: ""
       }));
     }
+
+    if (!title) {
+      return alert("Please enter title");
+    }
   };
 
   render() {
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView behavior="position" style={styles.container}>
         <Text style={styles.title}>What is the title of your new Deck?</Text>
         <View style={styles.inputView}>
           <TextInput
@@ -60,7 +65,7 @@ class NewDeck extends Component {
         ) : (
           <AndroidBtn onPress={() => this.submit()}>Create Deck</AndroidBtn>
         )}
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -76,8 +81,8 @@ const styles = StyleSheet.create({
     padding: 20
   },
   title: {
-    marginTop: 50,
-    fontSize: 40
+    marginTop: 30,
+    fontSize: 30
   },
   input: {
     height: 40,

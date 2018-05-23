@@ -34,9 +34,10 @@ class Decks extends Component {
         }
       >
         <Text style={styles.deckTitle}>{item.title}</Text>
-        {item.questions !== undefined && (
-          <Text style={styles.cards}>
+        {item.questions && (
+          <Text style={{ color: "black" }}>
             {Object.values(item.questions).length} Cards
+            {/* {console.log(Object.values(item.questions).length)} */}
           </Text>
         )}
       </TouchableOpacity>
@@ -74,23 +75,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: white
   },
+
   list: {
-    paddingBottom: 50,
+    // paddingBottom: 50,
     borderBottomColor: gray,
     borderBottomWidth: 1,
     borderBottomWidth: StyleSheet.hairlineWidth
   },
   deck: {
     margin: 15,
-    height: 44
+    height: 100
   },
   deckTitle: {
     fontSize: 36
   },
   cards: {
-    fontSize: 18
+    fontSize: 18,
+    color: "black"
   }
-
 });
 
 export default connect(mapStateToProps)(Decks);

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Platform
 } from "react-native";
+import Toast, {DURATION} from 'react-native-easy-toast'
 import Decks from "./components/Decks";
 import DeckDetail from "./components/DeckDetail";
 import { createStore } from "redux";
@@ -14,9 +15,12 @@ import reducer from "./reducers";
 import NewDeck from "./components/NewDeck";
 import NewCard from "./components/NewCard";
 import Quiz from "./components/Quiz";
+import Results from "./components/Results";
 import { StackNavigator, TabNavigator } from "react-navigation";
 import { white, gray, blue } from "./utils/colors";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { setLocalNotification } from './utils/helpers'
+
 
 const Tabs = TabNavigator(
   {
@@ -67,17 +71,25 @@ const MainNavigator = StackNavigator({
   Quiz: {
     screen: Quiz
   },
+  Results: {
+    screen: Results
+  },
   NewCard: {
     screen: NewCard
   }
 });
 
 export default class App extends React.Component {
+  componentDidMount() {
+    setLocalNotification()
+  }
+
   render() {
     return (
       <Provider store={createStore(reducer)}>
         <View style={{ flex: 1 }}>
           <MainNavigator />
+           <Toast ref="toast"/>
         </View>
       </Provider>
     );

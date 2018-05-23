@@ -12,6 +12,8 @@ import TextButton from "./TextButton";
 import AndroidBtn from "./AndroidBtn";
 import IosBtn from "./IosBtn";
 import { white, gray, blue, yellow } from "../utils/colors";
+import Results from "./Results";
+import { setLocalNotification, clearLocalNotification } from '../utils/helpers';
 
 class Quiz extends Component {
   state = {
@@ -22,7 +24,7 @@ class Quiz extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Quiz',
+      title: "Quiz",
       headerLeft: (
         <HeaderBackButton onPress={() => navigation.navigate("Home")} />
       )
@@ -30,39 +32,16 @@ class Quiz extends Component {
   };
 
   processQuiz = () => {
+    console.log("process")
     const { questions } = this.props.navigation.state.params;
-    const { index } = this.state;
+    const { index, correctAnswers } = this.state;
 
     if (index < questions.length - 1) {
       this.setState({ index: index + 1, revealAnswer: false });
     } else {
-      this.finalScore(questions);
+      clearLocalNotification().then(setLocalNotification);
+      this.props.navigation.navigate("Results", { correctAnswers: correctAnswers, questions: questions.length})
     }
-  };
-
-  finalScore = questions => {
-    const { correctAnswers } = this.state;
-    const { navigation } = this.props;
-
-    Alert.alert(
-      "Your score: " +
-        Math.round(correctAnswers / questions.length * 100) +
-        "%",
-      `${correctAnswers} out of ${questions.length} questions`,
-      [
-        {
-          text: "Try Again",
-          onPress: () =>
-            this.setState({
-              index: 0,
-              correctAnswers: 0,
-              revealAnswer: false
-            })
-        },
-        { text: "Cancel", onPress: () => navigation.goBack(), style: "cancel" }
-      ],
-      { cancelable: false }
-    );
   };
 
   quizCounter = (index, questions) => {
@@ -75,6 +54,14 @@ class Quiz extends Component {
     );
   };
 
+  correctAnswer = () => {
+    const { correctAnswers } = this.state;
+    this.setState({ correctAnswers: correctAnswers + 1 })
+    setTimeout(() => {
+      this.processQuiz()
+    }, 50);
+  }
+
   quizActions = questions => {
     return (
       <View>
@@ -82,37 +69,35 @@ class Quiz extends Component {
           <View>
             <IosBtn
               onPress={() =>
-                this.setState(
-                  { correctAnswers: this.state.correctAnswers + 1 },
-                  this.processQuiz
-                )
+                this.correctAnswer()
               }
             >
               Correct
             </IosBtn>
 
             <IosBtn
-              style={{ backgroundColor: white, borderColor: blue, borderWidth: 1}}
+              style={{
+                backgroundColor: white,
+                borderColor: blue,
+                borderWidth: 1
+              }}
               onPress={() => this.processQuiz()}
-              textStyle={{color: blue}}
+              textStyle={{ color: blue }}
             >
               Incorrect
             </IosBtn>
-
           </View>
         ) : (
           <View>
             <AndroidBtn
               onPress={() =>
-                this.setState(
-                  { correctAnswers: this.state.correctAnswers + 1 },
-                  this.processQuiz
-                )
+                this.correctAnswer()
               }
+
             >
               Correct
             </AndroidBtn>
-
+            {/* {console.log(this.state.correctAnswers)} */}
             <AndroidBtn onPress={() => this.processQuiz()}>
               Incorrect
             </AndroidBtn>
@@ -176,7 +161,7 @@ const styles = StyleSheet.create({
   index: {
     fontSize: 14,
     fontWeight: "bold"
-  },
+  }
 });
 
 export default Quiz;

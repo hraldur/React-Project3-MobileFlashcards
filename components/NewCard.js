@@ -8,7 +8,8 @@ import {
   Platform,
   TouchableOpacity
 } from "react-native";
-import { HeaderBackButton, NavigationActions } from "react-navigation";
+import { HeaderBackButton, NavigationActions, KeyboardAvoidingView } from "react-navigation";
+import Toast, { DURATION } from "react-native-easy-toast";
 import { addCardToDeck } from "../utils/api";
 import { connect } from "react-redux";
 import { addCard } from "../actions";
@@ -49,17 +50,25 @@ class NewCard extends Component {
     };
 
     if (card) {
-      addCardToDeck(deckId, card);
-      dispatch(addCard(deckId, card));
+      if (question == "" || answer == "") {
+        return alert("Fill both fields");
+      } else {
+        addCardToDeck(deckId, card);
+        dispatch(addCard(deckId, card));
 
-      this.setState(() => ({
-        question: "",
-        answer: ""
-      }));
+        this.setState(() => ({
+          question: "",
+          answer: ""
+        }));
+      }
     }
+
+    this.refs.toast.show("New Card successfully added");
   };
 
   render() {
+    const { navigation } = this.props;
+
     return (
       <View style={styles.container}>
         <View style={{ marginTop: 100 }}>
@@ -84,18 +93,27 @@ class NewCard extends Component {
               <IosBtn style={{ marginTop: 230 }} onPress={() => this.submit()}>
                 Create Card
               </IosBtn>
+
+              <IosBtn onPress={() => this.props.navigation.pop(2)}>
+                Cancel
+              </IosBtn>
             </View>
           ) : (
             <View>
               <AndroidBtn
-                style={{ marginTop: 200 }}
+                style={{ marginTop: 160 }}
                 onPress={() => this.submit()}
               >
                 Create Card
               </AndroidBtn>
+
+              <AndroidBtn onPress={() => this.props.navigation.pop(2)}>
+                Cancel
+              </AndroidBtn>
             </View>
           )}
         </View>
+        <Toast ref="toast" />
       </View>
     );
   }
